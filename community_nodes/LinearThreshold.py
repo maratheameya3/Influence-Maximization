@@ -60,7 +60,6 @@ def compute_curr_diffusion(dg, seed_set, threshold):
     curr_seed_set = set(seed_set)
     curr_seed_list = list(seed_set)
     for num in range(0, len(curr_seed_list)):
-        # import pdb; pdb.set_trace()
         neighbors = dg.successors(int(curr_seed_list[num]))
         for n in neighbors:
             if (n not in curr_seed_list):

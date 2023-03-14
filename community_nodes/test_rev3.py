@@ -133,16 +133,16 @@ def plot_graph(graph, layoutType, filename):
                 bbox=(1000,1000),
                 margin=30)
 
-def get_overlapping_boundary_nodes(g, partitions):
-    obns = []
-    for partition in partitions:
-        subgraph = g.subgraph(partition)
-        all_vertices = set(subgraph.vs)
-        interior_vertices = set(subgraph.vs.select(_neighborhood=all_vertices))
-        boundary_vertices = all_vertices - interior_vertices
-        obns.extend(list(boundary_vertices))
-    obns = [i]
-    return obns
+# def get_overlapping_boundary_nodes(g, partitions):
+#     obns = []
+#     for partition in partitions:
+#         subgraph = g.subgraph(partition)
+#         all_vertices = set(subgraph.vs)
+#         interior_vertices = set(subgraph.vs.select(_neighborhood=all_vertices))
+#         boundary_vertices = all_vertices - interior_vertices
+#         obns.extend(list(boundary_vertices))
+#     obns = [i]
+#     return obns
 
 def get_community_boundary_nodes(partitions):
     cbns = set()
@@ -169,13 +169,13 @@ def split_and_calculate(g, loc, k, filename):
     threshold = init_vertex_threshold(dg)
     final_influencers = list(set(final_influencers))
     cbns = get_community_boundary_nodes(partitions)
-    obns = get_overlapping_boundary_nodes(g, partitions)
+    # obns = get_overlapping_boundary_nodes(g, partitions)
     for i in cbns:
         if i not in final_influencers:
             final_influencers.add(i)
-    for i in obns:
-        if i not in final_influencers:
-            final_influencers.append(i)
+    # for i in obns:
+    #     if i not in final_influencers:
+    #         final_influencers.append(i)
     final_influencers = list(set(final_influencers))
     print("final influencers", len(final_influencers))
     final_influencers = test_method(final_influencers, threshold, dg, k)
