@@ -1,4 +1,4 @@
-# Based only on the dominant set whatever number that might be
+# Based on the Overlapping Boundary Nodes
 
 import queue
 import random
@@ -8,7 +8,6 @@ from LinearThreshold import get_directed_graph, init_vertex_threshold, init_edge
 from vertex_cover_rev import get_dominant_set, get_vertex_cover_actual
 from joblib import Parallel, delayed
 import multiprocessing
-from louvain_cd_test import *
 
 
 class queue_element():
@@ -133,30 +132,66 @@ def plot_graph(graph, layoutType, filename):
                 bbox=(1000,1000),
                 margin=30)
 
-# def get_overlapping_boundary_nodes(g, partitions):
-#     obns = []
-#     for partition in partitions:
-#         subgraph = g.subgraph(partition)
-#         all_vertices = set(subgraph.vs)
-#         interior_vertices = set(subgraph.vs.select(_neighborhood=all_vertices))
-#         boundary_vertices = all_vertices - interior_vertices
-#         obns.extend(list(boundary_vertices))
-#     obns = [i]
-#     return obns
+def get_overlapping_boundary_nodes(g, partitions):
+    obns = []
+    for partition in partitions:
+        subgraph = g.subgraph(partition)
+        all_vertices = set(subgraph.vs)
+        interior_vertices = set(subgraph.vs.select(_neighborhood=all_vertices))
+        boundary_vertices = all_vertices - interior_vertices
+        obns.extend(list(boundary_vertices))
+    obns = [i]
+    return obns
 
-def get_community_boundary_nodes(partitions):
-    cbns = set()
-    for i, community in enumerate(partitions):
-        for j, other_community in enumerate(partitions):
-            if i != j:
-                cbns.update(set(community) & set(other_community))
-    return cbns
+def get_partitions(g):
+    clusters = igraph.Graph.community_walktrap(g).as_clustering()
+    import pdb; pdb.set_trace()
+    # Convert the membership list to a dictionary
+    membership_dict = dict(enumerate(clusters.membership))
+
+    # Initialize an empty dictionary to store the overlapping vertices
+    overlapping_vertices = {}
+
+    # Iterate over the vertices and find the overlapping vertices
+    for vertex, clusters in membership_dict.items():
+        for cluster in clusters:
+            if cluster not in overlapping_vertices:
+                overlapping_vertices[cluster] = []
+            overlapping_vertices[cluster].append(vertex)
+    import pdb; pdb.set_trace()
+    # Print the overlapping vertices
+    print(overlapping_vertices)
 
 def split_and_calculate(g, loc, k, filename):
     g.vs["color"] = "blue"
-    read_ip(filename)
-    init_variables()
-    partitions, _ = start_louvain()
+    g = igraph.Graph()
+    g.add_vertices(10)
+    g.add_edges([(0,1),(1,2),(2,3),(3,4),(4,0),(0,5),(5,6),(6,7),(7,8),(8,9),(9,5),(5,2),(2,8)])
+    communities = g.community_fastgreedy().as_clustering()
+    # Initialize an empty dictionary to store the boundary nodes
+    boundary_nodes = {}
+
+    # Iterate over the edges and find the boundary nodes
+    for edge in g.es:
+        source = edge.source
+        target = edge.target
+        source_communities = [c for c in range(len(communities)) if source in communities[c]]
+        target_communities = [c for c in range(len(communities)) if target in communities[c]]
+        common_communities = set(source_communities).intersection(set(target_communities))
+        if len(common_communities) > 1:
+            for community_index in common_communities:
+                if community_index not in boundary_nodes:
+                    boundary_nodes[community_index] = []
+                if source not in boundary_nodes[community_index]:
+                    boundary_nodes[community_index].append(source)
+                if target not in boundary_nodes[community_index]:
+                    boundary_nodes[community_index].append(target)
+
+    # Print the boundary nodes for each community
+    for i, nodes in boundary_nodes.items():
+        print("Community", i+1, "boundary nodes:", nodes)
+    import pdb; pdb.set_trace()
+    partitions = communities
     final_influencers = []
     partitionslen = [len(partition) for partition in partitions]
     print(partitionslen)
@@ -168,14 +203,10 @@ def split_and_calculate(g, loc, k, filename):
     dg = init_edge_influence(dg)
     threshold = init_vertex_threshold(dg)
     final_influencers = list(set(final_influencers))
-    cbns = get_community_boundary_nodes(partitions)
-    # obns = get_overlapping_boundary_nodes(g, partitions)
-    for i in cbns:
+    obns = get_overlapping_boundary_nodes(partitions)
+    for i in obns:
         if i not in final_influencers:
             final_influencers.add(i)
-    # for i in obns:
-    #     if i not in final_influencers:
-    #         final_influencers.append(i)
     final_influencers = list(set(final_influencers))
     print("final influencers", len(final_influencers))
     final_influencers = test_method(final_influencers, threshold, dg, k)
@@ -192,4 +223,4 @@ print("---------------------------------Working for Facebook Dataset------------
 g = igraph.read("../data/0.edges", format="ncol", directed=True, names=True)
 for vertex in range(0, g.vcount(), 1):
     g.vs[vertex]["label"] = vertex
-split_and_calculate(g, "0", 30, "../data/0.edges")
+split_and_calculate(g, "0", 40, "../data/0.edges")

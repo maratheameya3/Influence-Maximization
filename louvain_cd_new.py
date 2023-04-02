@@ -19,6 +19,30 @@ sum_in_comm = []
 sum_total = []
 weights = []
 
+# def read_ip(loc):
+#     """
+#     Method to process input data passed as .edges file using igraph module.
+#     Storing it in variables titled nodes, edges.
+#     nodes - sorted array of nodes
+#     edges - array of edges in the format [((source, target), weight)]
+#     Input: location of .txt file
+#     Output: None
+#     """
+#     nodes_tup = []
+#     global nodes, edges, node_weights
+#     ext = os.path.splitext(loc)[-1].lower()
+#     if ext == ".edges" or ext == ".mtx":
+#         graph = igraph.read(loc, format="ncol", directed=True)
+#     if ext == ".gml":
+#         graph = igraph.Graph.Read_GML(loc)
+#     if ext == ".graphml":
+#         graph = igraph.Graph.Read_GraphML(loc)
+#     print(f"The number of nodes are {len(graph.vs)} and edges are {len(graph.es)}")
+#     nodes = sorted([int(i["id"]) for i in graph.vs])
+#     nodes_tup = [(int(i["id"]), int(i["id"])) for i in graph.vs]
+#     nodes_tup.sort(key=lambda x: x[0])
+#     edges = [((nodes_tup[i.source][1], nodes_tup[i.target][1]), 1) for i in graph.es]
+
 def read_ip(loc):
     """
     Method to process input data passed as .edges file using igraph module.
@@ -38,8 +62,9 @@ def read_ip(loc):
     if ext == ".graphml":
         graph = igraph.Graph.Read_GraphML(loc)
     print(f"The number of nodes are {len(graph.vs)} and edges are {len(graph.es)}")
-    nodes = sorted([int(i["id"]) for i in graph.vs])
-    nodes_tup = [(int(i["id"]), int(i["id"])) for i in graph.vs]
+    # import pdb; pdb.set_trace()
+    nodes = sorted([i.index for i in graph.vs])
+    nodes_tup = [(i.index, i.index) for i in graph.vs]
     nodes_tup.sort(key=lambda x: x[0])
     edges = [((nodes_tup[i.source][1], nodes_tup[i.target][1]), 1) for i in graph.es]
 

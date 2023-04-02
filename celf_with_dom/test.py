@@ -180,7 +180,7 @@ def compute_reach(g, dataset, K):
 # compute_reach(g, "youtube", K)
 
 # print("---------------------------------Working for Facebook Dataset---------------------------------")
-# g = igraph.read("0.edges", format="ncol", directed=True, names=True)
+# g = igraph.read("../data/0.edges", format="ncol", directed=True, names=True)
 # K = 50
 # for vertex in range(0, g.vcount(), 1):
 #     g.vs[vertex]["label"] = vertex
@@ -201,10 +201,10 @@ def compute_reach(g, dataset, K):
 #     g.vs[vertex]["label"] = vertex
 # compute_reach(g, "twitter", K)
 
-# print("---------------------------------Working for Netscience Dataset---------------------------------")
-# g = igraph.Graph.Read_GML('../data/netscience.gml')
-# K = 640
-# for vertex in range(0, g.vcount(), 1):
-#     g.vs[vertex]["name"] = g.vs[vertex]["label"]
-#     g.vs[vertex]["label"] = vertex
-# compute_reach(g, "netscience", K)
+print("---------------------------------Working for Netscience Dataset---------------------------------")
+g = igraph.Graph.Read_GML('../data/netscience.gml')
+K = 640
+for vertex in range(0, g.vcount(), 1):
+    g.vs[vertex]["name"] = g.vs[vertex]["label"]
+    g.vs[vertex]["label"] = vertex
+compute_reach(g, "netscience", K)

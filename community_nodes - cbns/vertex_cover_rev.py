@@ -39,7 +39,6 @@ def get_dominant_set(graph):
             for vertex in neighbors:
                 graph_degree = [i for i in graph_degree if i[0] != vertex]
             graph_degree = [i for i in graph_degree if i[0] != temp[0]]
-    print("^^^^^^^^^^^^^^^", dominant_set)
     return dominant_set
 
 # def get_dominant_set(graph, K):

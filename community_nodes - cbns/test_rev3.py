@@ -1,4 +1,4 @@
-# Based only on the dominant set whatever number that might be
+# Based on the Community Boundary Nodes
 
 import queue
 import random
@@ -133,9 +133,27 @@ def plot_graph(graph, layoutType, filename):
                 bbox=(1000,1000),
                 margin=30)
 
+# def get_overlapping_boundary_nodes(g, partitions):
+#     obns = []
+#     for partition in partitions:
+#         subgraph = g.subgraph(partition)
+#         all_vertices = set(subgraph.vs)
+#         interior_vertices = set(subgraph.vs.select(_neighborhood=all_vertices))
+#         boundary_vertices = all_vertices - interior_vertices
+#         obns.extend(list(boundary_vertices))
+#     obns = [i]
+#     return obns
+
+def get_community_boundary_nodes(partitions):
+    cbns = set()
+    for i, community in enumerate(partitions):
+        for j, other_community in enumerate(partitions):
+            if i != j:
+                cbns.update(set(community) & set(other_community))
+    return cbns
+
 def split_and_calculate(g, loc, k, filename):
     g.vs["color"] = "blue"
-    plot_graph(g, "random", "graph.png")
     read_ip(filename)
     init_variables()
     partitions, _ = start_louvain()
@@ -149,6 +167,15 @@ def split_and_calculate(g, loc, k, filename):
     dg = get_directed_graph(g)
     dg = init_edge_influence(dg)
     threshold = init_vertex_threshold(dg)
+    final_influencers = list(set(final_influencers))
+    cbns = get_community_boundary_nodes(partitions)
+    # obns = get_overlapping_boundary_nodes(g, partitions)
+    for i in cbns:
+        if i not in final_influencers:
+            final_influencers.add(i)
+    # for i in obns:
+    #     if i not in final_influencers:
+    #         final_influencers.append(i)
     final_influencers = list(set(final_influencers))
     print("final influencers", len(final_influencers))
     final_influencers = test_method(final_influencers, threshold, dg, k)

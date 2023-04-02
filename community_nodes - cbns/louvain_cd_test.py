@@ -38,9 +38,8 @@ def read_ip(loc):
     if ext == ".graphml":
         graph = igraph.Graph.Read_GraphML(loc)
     print(f"The number of nodes are {len(graph.vs)} and edges are {len(graph.es)}")
-    # import pdb; pdb.set_trace()
-    nodes = sorted([int(i['name']) for i in graph.vs])
-    nodes_tup = [(int(i['name']), int(i['name'])) for i in graph.vs]
+    nodes = sorted([i.index for i in graph.vs])
+    nodes_tup = [(i.index, i.index) for i in graph.vs]
     nodes_tup.sort(key=lambda x: x[0])
     edges = [((nodes_tup[i.source][1], nodes_tup[i.target][1]), 1) for i in graph.es]
 
