@@ -111,7 +111,7 @@ def compute_influence_spread(dg, seed_set, threshold, K):
 
 def color_vertex(g,influencer_list, spread_list):
     for i in range(0,g.vcount(),1):
-        g.vs[i]["color"] = "red" if g.vs[i]["label"] in influencer_list else \
+        g.vs[i]["color"] = "yellow" if g.vs[i]["label"] in influencer_list else \
             "green" if g.vs[i]["label"] in spread_list else "blue"
     return g
 
@@ -179,12 +179,12 @@ def compute_reach(g, dataset, K):
 #     g.vs[vertex]["label"] = vertex
 # compute_reach(g, "youtube", K)
 
-# print("---------------------------------Working for Facebook Dataset---------------------------------")
-# g = igraph.read("../data/0.edges", format="ncol", directed=True, names=True)
-# K = 50
-# for vertex in range(0, g.vcount(), 1):
-#     g.vs[vertex]["label"] = vertex
-# compute_reach(g, "facebook", K)
+print("---------------------------------Working for Facebook Dataset---------------------------------")
+g = igraph.read("../data/0.edges", format="ncol", directed=True, names=True)
+K = 50
+for vertex in range(0, g.vcount(), 1):
+    g.vs[vertex]["label"] = vertex
+compute_reach(g, "facebook", K)
 
 # print("---------------------------------Working for GOT Dataset---------------------------------")
 # g = igraph.Graph.Read_GraphML('../data/got.graphml')
@@ -201,10 +201,10 @@ def compute_reach(g, dataset, K):
 #     g.vs[vertex]["label"] = vertex
 # compute_reach(g, "twitter", K)
 
-print("---------------------------------Working for Netscience Dataset---------------------------------")
-g = igraph.Graph.Read_GML('../data/netscience.gml')
-K = 640
-for vertex in range(0, g.vcount(), 1):
-    g.vs[vertex]["name"] = g.vs[vertex]["label"]
-    g.vs[vertex]["label"] = vertex
-compute_reach(g, "netscience", K)
+# print("---------------------------------Working for Netscience Dataset---------------------------------")
+# g = igraph.Graph.Read_GML('../data/netscience.gml')
+# K = 640
+# for vertex in range(0, g.vcount(), 1):
+#     g.vs[vertex]["name"] = g.vs[vertex]["label"]
+#     g.vs[vertex]["label"] = vertex
+# compute_reach(g, "netscience", K)
