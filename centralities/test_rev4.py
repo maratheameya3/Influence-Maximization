@@ -81,6 +81,7 @@ def compute_reach_pagerank(g, k, partitions):
     print("!!!!!!!!!!!!!!!", len(influencers))
     curr_active_nodes = compute_influence_spread(dg, [inf[0] for inf in influencers], threshold, k)
     print("Total number of nodes influenced:", len(curr_active_nodes))
+    return len(curr_active_nodes)
 
 def compute_reach_betweenness(g, k, partitions):
     influencers = []
@@ -124,6 +125,7 @@ def compute_reach_betweenness(g, k, partitions):
     print("!!!!!!!!!!!!!!!", len(influencers))
     curr_active_nodes = compute_influence_spread(dg, [inf[0] for inf in influencers], threshold, k)
     print("Total number of nodes influenced:", len(curr_active_nodes))
+    return len(curr_active_nodes)
 
 def compute_reach_eigen_vector(g, k, partitions):
     influencers = []
@@ -167,6 +169,7 @@ def compute_reach_eigen_vector(g, k, partitions):
     print("!!!!!!!!!!!!!!!", len(influencers))
     curr_active_nodes = compute_influence_spread(dg, [inf[0] for inf in influencers], threshold, k)
     print("Total number of nodes influenced:", len(curr_active_nodes))
+    return len(curr_active_nodes)
 
 print("---------------------------------Working for twitter Dataset---------------------------------")
 g = igraph.read('../data/twitter.edges', format="ncol", directed=True, names=True)
@@ -174,9 +177,18 @@ K = 10
 for vertex in range(0, g.vcount(), 1):
     g.vs[vertex]["label"] = int(g.vs[vertex].index)
 partitions = get_partitions("../data/twitter.edges")
-compute_reach_pagerank(g, K, partitions)
-compute_reach_betweenness(g, K, partitions)
-compute_reach_eigen_vector(g, K, partitions)
+tot_pagerank = 0
+tot_betweenness = 0
+tot_eigenvector = 0
+for i in range(5):
+    tot_pagerank += compute_reach_pagerank(g, K, partitions)
+print("Average is ", tot_pagerank//5)
+for i in range(5):
+    tot_betweenness += compute_reach_betweenness(g, K, partitions)
+print("Average is ", tot_betweenness//5)
+for i in range(5):
+    tot_eigenvector += compute_reach_eigen_vector(g, K, partitions)
+print("Average is ", tot_eigenvector//5)
 
 # print("---------------------------------Working for Netscience Dataset---------------------------------")
 # g = igraph.Graph.Read_GML('../data/netscience.gml')

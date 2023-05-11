@@ -134,6 +134,7 @@ def plot_graph(graph, layoutType, filename):
                 margin=30)
 
 def split_and_calculate(g, loc, k, filename):
+    densities = []
     g.vs["color"] = "blue"
     plot_graph(g, "random", "graph.png")
     read_ip(filename)
@@ -144,8 +145,10 @@ def split_and_calculate(g, loc, k, filename):
     print(partitionslen)
     for partition in partitions:
         subgraph = g.subgraph(partition)
+        densities.append(subgraph.density())
         final_influencers.extend(get_dominant_set(subgraph))
-    
+    print("!!!!!!!!!!11111")
+    print(densities)
     dg = get_directed_graph(g)
     dg = init_edge_influence(dg)
     threshold = init_vertex_threshold(dg)
